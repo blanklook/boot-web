@@ -93,10 +93,9 @@ public class TestCustomerService {
 	}
 	
 	@Test
-	public void testSort() {
+	public void testPageableSort() {
 		Pageable pageable = new PageRequest(0, 20, Sort.Direction.DESC, "id");
 		Page<Customer> page = service.findAll(pageable);
 		assertThat(page.getContent().get(0).getId(), is(164L));
-
 	}
 }

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html ng-app="customerApp">
+<head>
+	<title>TO DO List</title>
+	<link href="css/bootstrap.min.css" rel="stylesheet" />
+	<script type="text/javascript" src="js/angular.min.js"></script>
+	<script type="text/javascript">
+		var model = { name: 'Customers' };
+		angular.module('customerApp', [])
+		.controller('customerCtrl', function($http) {
+			var customers = this;
+			customers.number = 0;
+			customers.size = 10;
+			customers.paging = [];
+			
+			var findAll = function(page, size) {
+				$http.get('api/customers/' + page + '/' + size)
+				.success(function(data) {
+					customers.totalElements = data.totalElements;
+					customers.content = data.content;
+					customers.totalPages = data.totalPages;
+					customers.number = data.number;
+					customers.first = data.first;
+					customers.last = data.last;
+
+					for (var n=0; n<customers.totalPages; n++ ) {
+						customers.paging[n] = n + 1;
+					}
+				});
+			};
+			
+			findAll(customers.number, customers.size);
+			
+			customers.pageNumber = function(number) {
+				return number-1 == customers.number ? 'btn-primary' : '';
+			};
+			
+			customers.selectNumber = function(number) {
+				customers.number = number - 1;
+				findAll(customers.number, customers.size);
+			};
+		});
+	</script>
+</head>
+<body ng-controller="customerCtrl as customers">
+	<div class="page=header">
+		<h1>Customers 
+			<span class="label label-default">
+				{{customers.totalElements}}
+			</span>
+		</h1>
+	</div>
+	<div class="panel">
+		<div class="input-group">
+			<input class="form-control"/>
+			<span class="input-group-btn">
+				<button class="btn btn-primary">Add</button>
+			</span>
+		</div>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>First Name</th>
+					<th>Last Name</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="customer in customers.content">
+					<td>{{ customer.id }}</td><td>{{ customer.firstName }}</td><td>{{ customer.lastName }}</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="btn-group pull-right">
+			<a class="btn btn-default"
+				ng-click="customers.selectNumber(page)"
+				ng-class="customers.pageNumber(page)"
+				ng-repeat="page in customers.paging">{{ page }}</a>
+		</div>
+	</div>
+</body>
+</html>

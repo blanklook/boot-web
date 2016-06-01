@@ -3,6 +3,9 @@ package com.example.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +27,13 @@ public class CustomerRestController {
 	List<Customer> getCustomers() {
 		return service.findAll();
 	}
+	
+	@RequestMapping(value="{page}/{size}", method=RequestMethod.GET)
+	Page<Customer> getCustomers(@PathVariable int page, @PathVariable int size) {
+		Pageable pageable = new PageRequest(page-1, size);
+		return service.findAll(pageable);
+	}
+	
 	@RequestMapping(value="{id}", method=RequestMethod.GET)
 	Customer getCustomer(@PathVariable("id") Long id) {
 		return service.findOne(id);

@@ -10,5 +10,4 @@ import com.example.domain.Customer;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 	public List<Customer> findByFirstName(String firstName);
-	
 }

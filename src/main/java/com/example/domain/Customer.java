@@ -19,8 +19,6 @@ public class Customer {
 	private String lastName;
 	
 	public Customer() {}
-	
-	
 
 	private Customer(Long id, String firstName, String lastName) {
 		this.id = id;
