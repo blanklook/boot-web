@@ -9,35 +9,28 @@
 		angular.module('customerApp', [])
 		.controller('customerCtrl', function($http) {
 			var customers = this;
-			customers.number = 0;
-			customers.size = 10;
+			customers.data = {};
 			customers.paging = [];
 			
 			var findAll = function(page, size) {
-				$http.get('api/customers/' + page + '/' + size)
+				$http.get('api/customers/?page=' + page + '&size=' + size)
 				.success(function(data) {
-					customers.totalElements = data.totalElements;
-					customers.content = data.content;
-					customers.totalPages = data.totalPages;
-					customers.number = data.number;
-					customers.first = data.first;
-					customers.last = data.last;
-
-					for (var n=0; n<customers.totalPages; n++ ) {
+					customers.data = data;
+					for (var n=0; n<customers.data.totalPages; n++ ) {
 						customers.paging[n] = n + 1;
 					}
 				});
 			};
 			
-			findAll(customers.number, customers.size);
+			findAll(0, 10);
 			
 			customers.pageNumber = function(number) {
-				return number-1 == customers.number ? 'btn-primary' : '';
+				return number-1 == customers.data.number ? 'btn-primary' : '';
 			};
 			
 			customers.selectNumber = function(number) {
-				customers.number = number - 1;
-				findAll(customers.number, customers.size);
+				customers.data.number = number - 1;
+				findAll(customers.data.number, customers.data.size);
 			};
 		});
 	</script>
@@ -46,7 +39,7 @@
 	<div class="page=header">
 		<h1>Customers 
 			<span class="label label-default">
-				{{customers.totalElements}}
+				{{customers.data.totalElements}}
 			</span>
 		</h1>
 	</div>
@@ -66,7 +59,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="customer in customers.content">
+				<tr ng-repeat="customer in customers.data.content">
 					<td>{{ customer.id }}</td><td>{{ customer.firstName }}</td><td>{{ customer.lastName }}</td>
 				</tr>
 			</tbody>
