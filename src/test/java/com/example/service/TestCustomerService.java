@@ -8,6 +8,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.App;
@@ -62,4 +66,37 @@ public class TestCustomerService {
 		assertThat(size, is(45));
 	}
 	
+	
+	@Test
+	public void testPageable() {
+		Pageable pageable = new PageRequest(0, 20);
+		Page<Customer> page = service.findAll(pageable);
+		
+		assertThat(page.getNumber(), is(0));
+		assertThat(page.getSize(), is(20));
+		assertThat(page.getTotalPages(), is(9));
+		
+		Pageable nextPageable = pageable.next();
+		page = service.findAll(nextPageable);
+
+		assertThat(page.getNumber(), is(1));
+		assertThat(page.getSize(), is(20));
+		assertThat(page.getTotalPages(), is(9));
+
+		Pageable lastPageable = new PageRequest(8, 20);
+		page = service.findAll(lastPageable);
+
+		assertThat(page.getNumber(), is(8));
+		assertThat(page.getSize(), is(20));
+		assertThat(page.getTotalPages(), is(9));
+		assertThat(page.getContent().size(), is(4));
+	}
+	
+	@Test
+	public void testSort() {
+		Pageable pageable = new PageRequest(0, 20, Sort.Direction.DESC, "id");
+		Page<Customer> page = service.findAll(pageable);
+		assertThat(page.getContent().get(0).getId(), is(164L));
+
+	}
 }
