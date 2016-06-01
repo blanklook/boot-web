@@ -31,7 +31,7 @@ public class TestCustomerService {
 		Customer savedCustomer = service.create(new Customer("A", "A1"));
 		int size = service.findAll().size();
 		assertThat(savedCustomer.getId(), is(notNullValue()));
-		assertThat(size, is(1));
+		assertThat(size, is(165));
 	}
 	
 	@Test
@@ -59,7 +59,7 @@ public class TestCustomerService {
 		service.create(new Customer("B", "B1"));
 		
 		int size = service.findByFirstName("B").size();
-		assertThat(size, is(4));
+		assertThat(size, is(45));
 	}
 	
 }
